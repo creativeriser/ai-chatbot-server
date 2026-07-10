@@ -21,12 +21,20 @@ function getClient() {
  *   ...
  * ]
  */
-export async function getChatResponse(history = [], userMessage) {
+export async function getChatResponse(history = [], userMessage, image = null) {
   const chat = getClient().chats.create({
     model: "gemini-2.5-flash",
     history,
   });
 
-  const response = await chat.sendMessage({ message: userMessage });
+  let messagePayload = userMessage;
+  if (image) {
+    messagePayload = [
+      userMessage,
+      { inlineData: { data: image.data, mimeType: image.mimeType } }
+    ];
+  }
+
+  const response = await chat.sendMessage({ message: messagePayload });
   return response.text;
 }
