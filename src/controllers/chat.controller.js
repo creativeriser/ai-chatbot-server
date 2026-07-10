@@ -1,14 +1,14 @@
 import { getChatResponse } from "../services/gemini.service.js";
 
 export async function handleChat(req, res) {
-  const { message, history } = req.body;
+  const { message, history, image } = req.body;
 
-  if (!message || typeof message !== "string" || !message.trim()) {
-    return res.status(400).json({ error: "Message is required." });
+  if ((!message || typeof message !== "string" || !message.trim()) && !image) {
+    return res.status(400).json({ error: "Message or image is required." });
   }
 
   try {
-    const reply = await getChatResponse(history || [], message);
+    const reply = await getChatResponse(history || [], message, image);
     return res.json({ reply });
   } catch (err) {
     console.error("Gemini API error:", err.message);
